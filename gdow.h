@@ -23,6 +23,13 @@
 #ifndef TITLEBAR_INACTIVE_COLOR
 #define TITLEBAR_INACTIVE_COLOR 0xff787878
 #endif //!TITLEBAR_INACTIVE_COLOR
+
+#ifndef BUTTON_ICON_MOUSEENTER_COLOR
+#define BUTTON_ICON_MOUSEENTER_COLOR 0xffffffff
+#endif //!BUTTON_ICON_MOUSEENTER_COLOR
+#ifndef BUTTON_ICON_MOUSELEFT_COLOR
+#define BUTTON_ICON_MOUSELEFT_COLOR 0xff000000
+#endif //!BUTTON_ICON_MOUSELEFT_COLOR
 #ifndef CLOSE_BUTTON_WIDTH
 #define CLOSE_BUTTON_WIDTH 48
 #endif //!CLOSE_BUTTON_WIDTH
@@ -202,13 +209,13 @@ void DrawCloseButton(HWND hwnd, bool isMouseLeave)
 
 	auto path = std::make_unique<Gdiplus::GraphicsPath>();
 	RoundedRect(path.get(), 0, 0, (float)size.cx, (float)size.cy, 0, config->borderRadius - config->borderWidth * 2, 0, 0);
-	std::unique_ptr<Gdiplus::Brush> br = std::make_unique<Gdiplus::SolidBrush>(isMouseLeave ? 0x01000000/*TITLEBAR_ACTIVE_COLOR*/ : 0xffE81123);
+	std::unique_ptr<Gdiplus::Brush> br = std::make_unique<Gdiplus::SolidBrush>(isMouseLeave ? 0x01000000 : 0xffE81123);
 	g->FillPath(br.get(), path.get());
 	br.reset();
 	path.reset();
 
 	float iconSize = 10;
-	auto pen = std::make_unique<Gdiplus::Pen>(isMouseLeave ? 0xff000000 : 0xffffffff, 1.0f);
+	auto pen = std::make_unique<Gdiplus::Pen>(isMouseLeave ? BUTTON_ICON_MOUSELEFT_COLOR : BUTTON_ICON_MOUSEENTER_COLOR, 1.0f);
 	g->DrawLine(pen.get(), Gdiplus::PointF{ size.cx / 2 - iconSize / 2, size.cy / 2 - iconSize / 2 }, Gdiplus::PointF{ size.cx / 2 + iconSize / 2, size.cy / 2 + iconSize / 2 });
 	g->DrawLine(pen.get(), Gdiplus::PointF{ size.cx / 2 + iconSize / 2, size.cy / 2 - iconSize / 2 }, Gdiplus::PointF{ size.cx / 2 - iconSize / 2, size.cy / 2 + iconSize / 2 });
 	pen.reset();
@@ -328,7 +335,7 @@ void DrawBaseWindow(HWND hwnd, bool isFocus)
 	br.reset();
 
 	br = std::make_unique<Gdiplus::SolidBrush>(isFocus ? TITLEBAR_ACTIVE_COLOR : TITLEBAR_INACTIVE_COLOR);
-	g->SetClip(Gdiplus::Rect{ 0, 0, size.cx - 0/*CLOSE_BUTTON_WIDTH*/, TITLEBAR_HEIGHT });
+	g->SetClip(Gdiplus::Rect{ 0, 0, size.cx, TITLEBAR_HEIGHT });
 	g->FillPath(br.get(), path.get());
 	g->ResetClip();
 	br.reset();
